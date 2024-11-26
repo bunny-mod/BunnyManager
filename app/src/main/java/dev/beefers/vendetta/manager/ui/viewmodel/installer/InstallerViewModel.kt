@@ -107,6 +107,14 @@ class InstallerViewModel(
         }
     }
 
+    fun reinstall() {
+        screenModelScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.IO) {
+                runner.steps.last().run(runner)
+            }
+        }
+    }
+
     private fun saveToAppStorage(): File {
         // Delete old logs to prevent junk buildup
         tempLogStorageDir.deleteRecursively()
