@@ -7,6 +7,7 @@ import dev.beefers.vendetta.manager.domain.manager.PreferenceManager
 import dev.beefers.vendetta.manager.installer.Installer
 import dev.beefers.vendetta.manager.installer.session.SessionInstaller
 import dev.beefers.vendetta.manager.installer.shizuku.ShizukuInstaller
+import dev.beefers.vendetta.manager.installer.shizuku.ShizukuPermissions
 import dev.beefers.vendetta.manager.installer.step.Step
 import dev.beefers.vendetta.manager.installer.step.StepGroup
 import dev.beefers.vendetta.manager.installer.step.StepRunner
@@ -38,7 +39,14 @@ class InstallStep(
             ?.takeIf { it.isNotEmpty() }
             ?: throw Error("Missing APKs from LSPatch step; failure likely")
 
-        val installer: Installer = when (preferences.installMethod) {
+        val installMethod = if (preferences.installMethod == InstallMethod.SHIZUKU && !ShizukuPermissions.waitShizukuPermissions()) {
+            // Temporarily use DEFAULT if SHIZUKU permissions are not granted
+            InstallMethod.DEFAULT
+        } else {
+            preferences.installMethod
+        }
+
+        val installer: Installer = when (installMethod) {
             InstallMethod.DEFAULT -> SessionInstaller(context)
             InstallMethod.SHIZUKU -> ShizukuInstaller(context)
         }

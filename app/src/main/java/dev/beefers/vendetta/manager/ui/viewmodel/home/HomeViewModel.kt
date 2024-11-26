@@ -22,6 +22,7 @@ import dev.beefers.vendetta.manager.domain.repository.RestRepository
 import dev.beefers.vendetta.manager.installer.Installer
 import dev.beefers.vendetta.manager.installer.session.SessionInstaller
 import dev.beefers.vendetta.manager.installer.shizuku.ShizukuInstaller
+import dev.beefers.vendetta.manager.installer.shizuku.ShizukuPermissions
 import dev.beefers.vendetta.manager.network.dto.Release
 import dev.beefers.vendetta.manager.network.utils.CommitsPagingSource
 import dev.beefers.vendetta.manager.network.utils.dataOrNull
@@ -129,7 +130,14 @@ class HomeViewModel(
             downloadManager.downloadUpdate(update)
             isUpdating = false
 
-            val installer: Installer = when (prefs.installMethod) {
+            val installMethod = if (prefs.installMethod == InstallMethod.SHIZUKU && !ShizukuPermissions.waitShizukuPermissions()) {
+                // Temporarily use DEFAULT if SHIZUKU permissions are not granted
+                InstallMethod.DEFAULT
+            } else {
+                prefs.installMethod
+            }
+
+            val installer: Installer = when (installMethod) {
                 InstallMethod.DEFAULT -> SessionInstaller(context)
                 InstallMethod.SHIZUKU -> ShizukuInstaller(context)
             }
