@@ -1,4 +1,3 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -6,18 +5,19 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "dev.beefers.vendetta.manager"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "io.github.pyoncord.manager"
         minSdk = 28
-        targetSdk = 34
-        versionCode = 1005
-        versionName = "1.0.5"
+        targetSdk = 35
+        versionCode = 1009
+        versionName = "1.0.9"
 
         buildConfigField("String", "GIT_BRANCH", "\"${getCurrentBranch()}\"")
         buildConfigField("String", "GIT_COMMIT", "\"${getLatestCommit()}\"")
@@ -52,7 +52,8 @@ android {
         freeCompilerArgs += listOf(
             "-Xcontext-receivers",
             "-P",
-            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${buildDir.resolve("report").absolutePath}",
+            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
+                    layout.buildDirectory.get().asFile.resolve("report").absolutePath,
         )
     }
 
