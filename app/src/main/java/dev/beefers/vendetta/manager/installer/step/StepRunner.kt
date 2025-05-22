@@ -110,6 +110,11 @@ class StepRunner(
     var downloadErrored by mutableStateOf(false)
 
     /**
+     * Whether or not cache exist, only useful for reinstall button currently
+     */
+    var cacheExist by mutableStateOf<Boolean>(true)
+
+    /**
      * List of steps to go through for this install
      *
      * ORDER MATTERS
@@ -154,6 +159,7 @@ class StepRunner(
      */
     fun clearCache() {
         cacheDir.deleteRecursively()
+        cacheExist = false
     }
 
     /**

@@ -49,7 +49,7 @@ abstract class Step: KoinComponent {
      *
      * @param runner The host runner, used to share information between steps
      */
-    protected abstract suspend fun run(runner: StepRunner)
+    abstract suspend fun run(runner: StepRunner)
 
     /**
      * Safely runs this step, catching any errors and timing how long it runs.
