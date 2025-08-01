@@ -33,7 +33,7 @@ class UpdateWorker(
 
                 if (latestVersion == null || currentVersion == null) return Result.failure()
 
-                if (latestVersion > currentVersion) {
+                if (latestVersion > currentVersion && latestVersion.isSupported()) {
                     context.sendBroadcast(
                         Intent(
                             context,

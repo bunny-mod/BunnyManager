@@ -51,6 +51,7 @@ class HomeViewModel(
         private set
 
     var showUpdateDialog by mutableStateOf(false)
+    var showEolDialog by mutableStateOf(true)
     var isUpdating by mutableStateOf(false)
     val commits = Pager(PagingConfig(pageSize = 30)) { CommitsPagingSource(repo) }.flow.cachedIn(screenModelScope)
 

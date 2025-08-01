@@ -47,6 +47,7 @@ import dev.beefers.vendetta.manager.ui.screen.installer.InstallerScreen
 import dev.beefers.vendetta.manager.ui.screen.settings.SettingsScreen
 import dev.beefers.vendetta.manager.ui.viewmodel.home.HomeViewModel
 import dev.beefers.vendetta.manager.ui.widgets.AppIcon
+import dev.beefers.vendetta.manager.ui.widgets.dialog.EndOfLifeDialog
 import dev.beefers.vendetta.manager.ui.widgets.dialog.StoragePermissionsDialog
 import dev.beefers.vendetta.manager.ui.widgets.home.CommitList
 import dev.beefers.vendetta.manager.ui.widgets.updater.UpdateDialog
@@ -70,7 +71,13 @@ class HomeScreen : Screen {
         val latestVersion =
             remember(prefs.discordVersion, viewModel.discordVersions, prefs.channel) {
                 when {
-                    prefs.discordVersion.isBlank() -> viewModel.discordVersions?.get(prefs.channel)
+                    prefs.discordVersion.isBlank() -> {
+                        val ver = viewModel.discordVersions?.get(prefs.channel)
+                        if (ver == null) return@remember null
+
+                        if (ver.isSupported()) ver
+                        else DiscordVersion.fromVersionCode(ver.type.maxVersionCode.toString())
+                    }
                     else -> DiscordVersion.fromVersionCode(prefs.discordVersion)
                 }
             }
@@ -78,6 +85,10 @@ class HomeScreen : Screen {
         // == Dialogs == //
 
         StoragePermissionsDialog()
+
+        if (viewModel.showEolDialog)
+            EndOfLifeDialog { viewModel.showEolDialog = false }
+
 
         if (
             viewModel.showUpdateDialog &&
